@@ -21,11 +21,11 @@ inputs:
   bucket:
     required: true
     type: string
-    description: 'The Google Cloud bucket to sync to.'
+    description: 'The Google Cloud bucket to sync to. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions.'
   credentials:
     required: true
     type: string
-    description: 'The Google Cloud credentials.'
+    description: 'The Google Cloud credentials. Should be base64 encoded.'
 ```
 
 ## Example
