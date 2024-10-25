@@ -13,7 +13,7 @@ inputs:
   destination:
     required: true
     type: string
-    description: 'The destination directory to sync. Relative to the bucket.'
+    description: 'The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions.'
   project_number:
     required: true
     type: string
@@ -21,7 +21,7 @@ inputs:
   bucket:
     required: true
     type: string
-    description: 'The Google Cloud bucket to sync to. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions.'
+    description: 'The Google Cloud bucket to sync to.'
   credentials:
     required: true
     type: string
