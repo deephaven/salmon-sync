@@ -1,6 +1,6 @@
 # salmon-sync
 
-This is a Github Action that syncs a folder to a Google Cloud bucket using `rclone`.
+This is a Github Action that syncs a folder to a Google Cloud bucket using `rclone` and then send an authenticated request to the doc site to invalidate the cache for the doc version.
 This action is only meant to work for Deephaven's documentation. It could be used in a more general purpose way to sync a folder into any Google cloud bucket (with the proper credentials), but that is subject to change and may break in any version.
 
 ## Parameters
