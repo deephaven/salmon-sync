@@ -1,27 +1,31 @@
 name: Sync Salmon Directory
 description: Syncs a directory to a Google Cloud bucket using rclone.
-author: 'deephaven'
+author: "deephaven"
 inputs:
   source:
     required: true
     type: string
-    description: 'The source directory to sync.'
+    description: "The source directory to sync."
   destination:
     required: true
     type: string
-    description: 'The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions.'
-  project_number:
-    required: true
-    type: string
-    description: 'The Google Cloud project number.'
+    description: "The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions."
   bucket:
     required: true
     type: string
-    description: 'The Google Cloud bucket to sync to.'
+    description: "The Google Cloud bucket to sync to."
   credentials:
     required: true
     type: string
-    description: 'The Google Cloud credentials. Should be base64 encoded.'
+    description: "The Google Cloud credentials. Should be base64 encoded."
+  cache-bust-token:
+    required: true
+    type: string
+    description: "The cache-bust token"
+  cache-bust-url:
+    required: true
+    type: string
+    description: "The cache-bust URL"
 
 runs:
   using: "composite"
@@ -37,13 +41,22 @@ runs:
         echo $RCLONE_GCS_SERVICE_ACCOUNT_CREDENTIALS_ENCODED | base64 --decode > $HOME/credentials.json
       env:
         RCLONE_GCS_SERVICE_ACCOUNT_CREDENTIALS_ENCODED: ${{ inputs.credentials }}
-      
 
     - name: Sync source to destination
       shell: bash
       env:
         RCLONE_CONFIG_GCS_TYPE: "google cloud storage"
         RCLONE_GCS_SERVICE_ACCOUNT_FILE: $HOME/credentials.json
-        RCLONE_GCS_PROJECT_NUMBER: ${{ inputs.project_number }}
         RCLONE_GCS_BUCKET_POLICY_ONLY: "true"
       run: rclone sync ${{ inputs.source }} gcs:${{ inputs.bucket }}/${{ inputs.destination }}
+
+    - name: Bust cache
+      shell: bash
+      env:
+        CACHE_BUST_TOKEN: ${{ inputs.cache-bust-token }}
+      run: |
+        curl --fail-with-body --show-error --silent \
+          --request POST \
+          --header "authorization: Bearer $CACHE_BUST_TOKEN" \
+          --data "{ \"tags\": [ \"${{ inputs.destination }}\" ]}" \
+          --url ${{ inputs.cache-bust-url }}
