@@ -46,6 +46,6 @@ Here is an example that syncs from the local path `temp/blog` to the blog sectio
     destination: deephaven/deephaven.io/blog
     bucket: ${{ vars.DOCS_GOOGLE_CLOUD_BUCKET }} # or ${{ vars.DOCS_PREVIEW_BUCKET }}
     credentials: ${{ secrets.DOCS_GOOGLE_CLOUD_CREDENTIALS }}
-    cache-bust-token: ${{ secrets.CACHE_BUST_TOKEN }}
+    cache-bust-token: ${{ secrets.DOCS_CACHE_BUST_TOKEN }}
     cache-bust-url: ${{ vars.DOCS_PROD_CACHE_BUST_URL }} # or ${{ vars.DOCS_PREVIEW_CACHE_BUST_URL }}
 ```
