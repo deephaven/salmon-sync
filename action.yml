@@ -22,10 +22,10 @@ inputs:
     required: true
     type: string
     description: "The cache-bust token"
-  cache-bust-url:
+  docs-url:
     required: true
     type: string
-    description: "The cache-bust URL"
+    description: "The doc site URL"
 
 runs:
   using: "composite"
@@ -59,4 +59,4 @@ runs:
           --request POST \
           --header "authorization: Bearer $CACHE_BUST_TOKEN" \
           --data "{ \"tags\": [ \"${{ inputs.destination }}\" ]}" \
-          --url ${{ inputs.cache-bust-url }}
+          --url ${{ inputs.docs-url }}/api/cache-bust/

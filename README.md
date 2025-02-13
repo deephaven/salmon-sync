@@ -27,10 +27,10 @@ inputs:
     required: true
     type: string
     description: "The cache-bust token"
-  cache-bust-url:
+  docs-url:
     required: true
     type: string
-    description: "The cache-bust URL"
+    description: "The doc site URL"
 ```
 
 ## Example
@@ -47,5 +47,5 @@ Here is an example that syncs from the local path `temp/blog` to the blog sectio
     bucket: ${{ vars.DOCS_PROD_BUCKET }} # or ${{ vars.DOCS_PREVIEW_BUCKET }}
     credentials: ${{ secrets.DOCS_GOOGLE_CLOUD_CREDENTIALS }}
     cache-bust-token: ${{ secrets.DOCS_CACHE_BUST_TOKEN }}
-    cache-bust-url: ${{ vars.DOCS_PROD_CACHE_BUST_URL }} # or ${{ vars.DOCS_PREVIEW_CACHE_BUST_URL }}
+    docs-url: ${{ vars.DOCS_PROD_URL }} # or ${{ vars.DOCS_PREVIEW_URL }}
 ```
