@@ -40,7 +40,9 @@ runs:
     - name: Sync source to destination
       shell: bash
       env:
-        RCLONE_GCS_SERVICE_ACCOUNT_FILE: $HOME/credentials.json
-        RCLONE_GCS_BUCKET_POLICY_ONLY: "true"
+        RCLONE_S3_PROVIDER: AWS
+        RCLONE_S3_REGION: us-east-2
+        RCLONE_S3_ENV_AUTH: true
+        RCLONE_S3_NO_CHECK_BUCKET: true # Don't try to create the bucket and fail if it doesn't exist
       run: |
-        rclone sync --fast-list --checksum --s3-env-auth --s3-no-check-bucket ${{ inputs.source }} s3:${{ inputs.bucket }}/${{ inputs.destination }} --header-upload "x-amz-tagging: temporary=true"
+        rclone sync --fast-list --checksum ${{ inputs.source }} :s3:${{ inputs.bucket }}/${{ inputs.destination }} ${{ inputs.temporary && '--header-upload "x-amz-tagging: temporary=true"' }}
