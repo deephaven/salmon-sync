@@ -10,18 +10,18 @@ inputs:
     required: true
     type: string
     description: "The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions."
-  bucket:
+  production:
     required: true
-    type: string
-    description: "The bucket to sync to."
+    type: boolean
+    description: "If true, the files will be deployed to the production site. Otherwise they will be deployed to the preview site."
+  temporary:
+    required: true
+    type: boolean
+    description: "If true, the files will be marked as temporary and deleted after 14 days. Otherwise they will persist in S3 indefinitely."
   aws-role:
     required: true
     type: string
     description: "The AWS role to assume."
-  temporary:
-    required: false
-    type: boolean
-    description: "If true, the files will be marked as temporary and deleted after 14 days."
 
 runs:
   using: "composite"
@@ -45,4 +45,4 @@ runs:
         RCLONE_S3_ENV_AUTH: true
         RCLONE_S3_NO_CHECK_BUCKET: true # Don't try to create the bucket and fail if it doesn't exist
       run: |
-        rclone sync --fast-list --checksum ${{ inputs.source }} :s3:${{ inputs.bucket }}/${{ inputs.destination }} ${{ inputs.temporary && '--header-upload "x-amz-tagging: temporary=true"' }}
+        rclone sync --fast-list --checksum ${{ inputs.source }} :s3:${{ inputs.production && 'deephaven-docs' || 'deephaven-docs-preview' }}/${{ inputs.destination }} ${{ inputs.temporary && '--header-upload "x-amz-tagging: temporary=true"' }}

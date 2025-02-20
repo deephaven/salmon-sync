@@ -1,7 +1,7 @@
 # salmon-sync
 
-This is a Github Action that syncs a folder to a Google Cloud bucket using `rclone` and then send an authenticated request to the doc site to invalidate the cache for the doc version.
-This action is only meant to work for Deephaven's documentation. It could be used in a more general purpose way to sync a folder into any Google cloud bucket (with the proper credentials), but that is subject to change and may break in any version.
+This is a Github Action that syncs a folder to a S3 bucket using `rclone`.
+This action is only meant to work for Deephaven's documentation.
 
 ## Parameters
 
@@ -15,22 +15,18 @@ inputs:
     required: true
     type: string
     description: "The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions."
-  bucket:
+  production:
+    required: true
+    type: boolean
+    description: "If true, the files will be deployed to the production site. Otherwise they will be deployed to the preview site."
+  temporary:
+    required: true
+    type: boolean
+    description: "If true, the files will be marked as temporary and deleted after 14 days. Otherwise they will persist in S3 indefinitely."
+  aws-role:
     required: true
     type: string
-    description: "The Google Cloud bucket to sync to."
-  credentials:
-    required: true
-    type: string
-    description: "The Google Cloud credentials. Should be base64 encoded."
-  cache-bust-token:
-    required: true
-    type: string
-    description: "The cache-bust token"
-  docs-url:
-    required: true
-    type: string
-    description: "The doc site URL"
+    description: "The AWS role to assume."
 ```
 
 ## Example
@@ -44,8 +40,7 @@ Here is an example that syncs from the local path `temp/blog` to the blog sectio
   with:
     source: temp/blog
     destination: deephaven/deephaven.io/blog
-    bucket: ${{ vars.DOCS_PROD_BUCKET }} # or ${{ vars.DOCS_PREVIEW_BUCKET }}
-    credentials: ${{ secrets.DOCS_GOOGLE_CLOUD_CREDENTIALS }}
-    cache-bust-token: ${{ secrets.DOCS_CACHE_BUST_TOKEN }}
-    docs-url: ${{ vars.DOCS_PROD_URL }} # or ${{ vars.DOCS_PREVIEW_URL }}
+    production: true # false for pr previews
+    temporary: false # true will delete non-production files after 14 days
+    aws-role: ${{ vars.DOCS_AWS_ROLE }}
 ```
