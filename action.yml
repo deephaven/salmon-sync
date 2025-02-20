@@ -1,5 +1,5 @@
 name: Sync Salmon Directory
-description: Syncs a directory to a Google Cloud bucket using rclone.
+description: Syncs a directory to a bucket using rclone.
 author: "deephaven"
 inputs:
   source:
@@ -13,19 +13,15 @@ inputs:
   bucket:
     required: true
     type: string
-    description: "The Google Cloud bucket to sync to."
-  credentials:
+    description: "The bucket to sync to."
+  aws-role:
     required: true
     type: string
-    description: "The Google Cloud credentials. Should be base64 encoded."
-  cache-bust-token:
-    required: true
-    type: string
-    description: "The cache-bust token"
-  docs-url:
-    required: true
-    type: string
-    description: "The doc site URL"
+    description: "The AWS role to assume."
+  temporary:
+    required: false
+    type: boolean
+    description: "If true, the files will be marked as temporary and deleted after 14 days."
 
 runs:
   using: "composite"
@@ -35,28 +31,16 @@ runs:
       with:
         version: v1.68.1
 
-    - name: Decode credentials
-      shell: bash
-      run: |
-        echo $RCLONE_GCS_SERVICE_ACCOUNT_CREDENTIALS_ENCODED | base64 --decode > $HOME/credentials.json
-      env:
-        RCLONE_GCS_SERVICE_ACCOUNT_CREDENTIALS_ENCODED: ${{ inputs.credentials }}
+    - name: AWS OIDC Auth
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2 # Docs are hosted in us-east-2
+        role-to-assume: ${{ inputs.aws-role }}
 
     - name: Sync source to destination
       shell: bash
       env:
-        RCLONE_CONFIG_GCS_TYPE: "google cloud storage"
         RCLONE_GCS_SERVICE_ACCOUNT_FILE: $HOME/credentials.json
         RCLONE_GCS_BUCKET_POLICY_ONLY: "true"
-      run: rclone sync ${{ inputs.source }} gcs:${{ inputs.bucket }}/${{ inputs.destination }}
-
-    - name: Bust cache
-      shell: bash
-      env:
-        CACHE_BUST_TOKEN: ${{ inputs.cache-bust-token }}
       run: |
-        curl --fail-with-body --show-error --silent \
-          --request POST \
-          --header "authorization: Bearer $CACHE_BUST_TOKEN" \
-          --data "{ \"tags\": [ \"${{ inputs.destination }}\" ]}" \
-          --url ${{ inputs.docs-url }}/api/cache-bust/
+        rclone sync --fast-list --checksum --s3-env-auth --s3-no-check-bucket ${{ inputs.source }} s3:${{ inputs.bucket }}/${{ inputs.destination }} --header-upload "x-amz-tagging: temporary=true"
