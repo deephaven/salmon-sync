@@ -15,18 +15,20 @@ inputs:
     required: true
     type: string
     description: "The destination directory to sync. Relative to the bucket. It is recommended to use the GitHub repo path (such as deephaven/salmon-sync) as the minimum base to prevent collisions."
-  production:
-    required: true
-    type: boolean
-    description: "If true, the files will be deployed to the production site. Otherwise they will be deployed to the preview site."
-  temporary:
-    required: true
-    type: boolean
-    description: "If true, the files will be marked as temporary and deleted after 14 days. Otherwise they will persist in S3 indefinitely."
   aws-role:
     required: true
     type: string
     description: "The AWS role to assume."
+  production:
+    required: false
+    default: "false"
+    type: boolean
+    description: "If true, the files will be deployed to the production site. Otherwise they will be deployed to the preview site."
+  temporary:
+    required: false
+    default: "true"
+    type: boolean
+    description: "If true, the files will be marked as temporary and deleted after 14 days. Otherwise they will persist in S3 indefinitely."
 ```
 
 ## Example
