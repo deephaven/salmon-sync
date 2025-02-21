@@ -49,4 +49,4 @@ runs:
       # Check temporary != 'false' so any other value is marked as temporary since there's no actual validation of boolean or required inputs
       # The production bucket doesn't have a lifecycle rule, so omitting temporary just results in a tag on files. They won't actually be deleted
       run: |
-        rclone sync --fast-list --checksum ${{ inputs.source }} :s3:${{ inputs.production == 'true' && 'deephaven-docs' || 'deephaven-docs-preview' }}/${{ inputs.destination }} ${{ inputs.temporary != 'false' && '--header-upload "x-amz-tagging: temporary=true"' }}
+        rclone sync --fast-list --checksum ${{ inputs.source }} :s3:${{ inputs.production == 'true' && 'deephaven-docs' || 'deephaven-docs-preview' }}/${{ inputs.destination }} ${{ inputs.temporary != 'false' && '--header-upload "x-amz-tagging: temporary=true"' || '' }}
