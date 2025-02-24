@@ -5,6 +5,11 @@ This action is only meant to work for Deephaven's documentation.
 
 ## Parameters
 
+> [!IMPORTANT]
+> This action uses OIDC to authenticate with AWS.
+> Your job must include the `id-token: write` permission and specify any other permissions it needs.
+> See the [GitHub docs](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#permissions-for-the-github_token) for more info.
+
 ```yml
 inputs:
   source:
@@ -37,12 +42,25 @@ The action can be used as a step in a workflow
 Here is an example that syncs from the local path `temp/blog` to the blog section of the bucket.
 
 ```yml
-- name: Sync to the blog
-  uses: deephaven/salmon-sync@v1
-  with:
-    source: temp/blog
-    destination: deephaven/deephaven.io/blog
-    production: true # false for pr previews
-    temporary: false # true will delete non-production files after 14 days
-    aws-role: ${{ vars.DOCS_AWS_ROLE }}
+jobs:
+  upload-to-salmon:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write # Needed to authenticate with AWS
+      contents: read # If you want to checkout the repo
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Build docs
+        run: echo "Build docs here"
+
+      - name: Sync docs
+        uses: deephaven/salmon-sync@v1
+        with:
+          source: temp/blog
+          destination: deephaven/deephaven.io/blog
+          production: true # false for pr previews
+          temporary: false # true will delete non-production files after 14 days
+          aws-role: ${{ vars.DOCS_AWS_ROLE }}
 ```
