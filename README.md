@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build docs
-        run: echo "Build docs here"
+        run: exit 1; # Replace with actually building docs
 
       - name: Sync docs
         uses: deephaven/salmon-sync@v1
