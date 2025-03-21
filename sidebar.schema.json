@@ -1,0 +1,94 @@
+{
+  "$comment": "This is a JSON schema for the Salmon sidebar file format copied from https://github.com/deephaven/salmon/blob/main/tools/validator/sidebar.schema.json to make it publically usable.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Salmon Sidebar File",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["name"]
+    },
+    "sidebars": {
+      "type": "object",
+      "properties": {
+        "main": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sidebarItem"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["main"]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["config", "sidebars"],
+  "$defs": {
+    "sidebarItem": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "className": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["label", "path"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "href": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["label", "href"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/sidebarItem"
+              }
+            },
+            "collapsible": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["label", "items"]
+        }
+      ]
+    }
+  }
+}
