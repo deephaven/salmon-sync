@@ -34,6 +34,11 @@ inputs:
     default: "true"
     type: boolean
     description: "If true, the files will be marked as temporary and deleted after 14 days. Otherwise they will persist in S3 indefinitely."
+  copy-only:
+    required: false
+    default: "false"
+    type: boolean
+    description: "If true, uses rclone copy instead of sync. The files will be copied to the destination without affecting the existing files that do not exist in the source."
 ```
 
 ## Example
