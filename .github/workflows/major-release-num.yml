@@ -4,7 +4,7 @@ name: Move Major Release Tag
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 permissions:
   contents: write # needed to push the moved tag
