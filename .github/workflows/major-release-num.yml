@@ -4,7 +4,7 @@ name: Move Major Release Tag
 
 on:
   release:
-    types: [published]
+    types: [released]
 
 permissions:
   contents: write # needed to push the moved tag
@@ -12,7 +12,6 @@ permissions:
 jobs:
   movetag:
     runs-on: ubuntu-latest
-    if: github.event.release.prerelease == false
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
